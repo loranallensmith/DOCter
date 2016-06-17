@@ -1,4 +1,4 @@
-# Jekyll Asset Bundler
+# Getting Started
 
 Butternut is a plugin for bundling assets.
 It integrates with multiple frameworks for a seamless deployment experience.
@@ -12,11 +12,13 @@ If your project is in a git repository, you can easily
 manage your plugins by utilizing git submodules.
 
 To install this plugin as a git submodule:
+
 ```
-    git submodule add git://github.com/moshen/jekyll-asset_bundler.git _plugins/asset_bundler`
+    git submodule add git://github.com/ipsum/butternut.git _plugins/asset_bundler`
 ```
 
 To update:
+
 ```
     cd _plugins/asset_bundler
     git pull origin master
@@ -78,66 +80,6 @@ markup for including JavaScript and CSS.
 Each of the following blocks consumes a [YAML](http://yaml.org)
 formatted array.
 
-### Liquid::Blocks
-
-#### bundle
-```
-    {% bundle %} [/js/main.js, /js/somethingelse.js] {% endbundle %}
-```
-Is equal to:
-```
-    {% bundle %}
-    - /js/main.js
-    - /js/somethingelse.js
-    {% endbundle %}
-```
-
-Remote assets can also be bundled:
-```
-    {% bundle %}
-    - http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js
-    - //cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.1/underscore-min.js
-    - https://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js
-    - /js/my_local_javascript.js
-    {% endbundle %}
-```
-
-Remote assets will be cached in the `_asset_bundler_cache` folder
-(in the same directory as your `_plugins` folder). If you want to
-regenerate cached items, delete the cache folder.
-
-The `bundle` tag will concatenate the provided scripts and make a hash of
-the result.  This hash is used as a filename.  The Bundle is then compressed
-(if desired), and the final result cached in the `_asset_bundler_cache` folder.
-Therefore, the bundle is only recreated and compressed again if the source
-files have been modified.  This greatly speeds up future site builds.
-
-**Note:** Asset Bundler makes no attempt to clean up the cache folder.  If it
-has grown too large, simply delete it.
-
-The proper markup is finally inserted to include your bundle file.
-
-#### bundle_glob
-```
-    {% bundle_glob %}
-    - /js/*.js
-    - /css/*.css
-    {% endbundle_glob %}
-```
-
-The `bundle_glob` tag uses the
-[Ruby Dir.glob](http://ruby-doc.org/core-1.9.3/Dir.html#method-c-glob)
-method to include multiple assets.
-  WARNING: assets will be included in alphanumeric order,
-this may screw something up.
-
-#### dev_assets
-```
-    {% dev_assets %}
-    - /js/less.js
-    {% enddev_assets %}
-```
-
 The `dev_assets` tag includes the normal markup for the referenced
 assets only in 'dev mode'.  The array items can either be local files
 or urls for external scripts and are included as-is.
@@ -150,7 +92,7 @@ utilizing things like LessCSS and CoffeeScript.
 Some behavior can be modified with settings in your `_config.yml`.  The
 following represents the default configuration:
 
-```yaml
+```
     asset_bundler:
       compress:
         js: false

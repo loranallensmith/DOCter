@@ -3,6 +3,10 @@ exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 markdown: kramdown
 highlighter: rouge
 
+kramdown:
+  input: GFM
+  hard_wrap: false
+
 collections:
   pages:
     output: true
