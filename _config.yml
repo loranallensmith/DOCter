@@ -9,20 +9,20 @@ collections:
     permalink: /:path/
 
 # Title
-name: DOCter
-subtitle: A Jekyll template for project documentation
+name: Butternut
+subtitle: Mouth-watering asset compression
 
 # When using this template with a project page set the baseurl to '/project-name'
 # For user/organization pages set this to an empty string
 # When working locally use jekyll serve --baseurl '' so that you can view everything at localhost:4000
 # See http://jekyllrb.com/docs/github-pages/ for more info
 #baseurl: ''
-baseurl: '/DOCter'
+baseurl: '/butternut'
 
 # Author/Organization info to be displayed in the templates
 author:
-  name: Name
-  url: http://localhost:4000
+  name: The Butternut Cooperative
+  url:
 
 # Point the logo URL at a file in your repo or hosted elsewhere by your organization
 logourl:
@@ -34,22 +34,24 @@ navigation:
 - text: Home
   url: ./
   internal: true
-- text: Example Page
+- text: Getting Started
   url: example_page/
   internal: true
-- text: DOCter Repo
-  url: https://github.com/cfpb/DOCter
-  internal: false
+- text: API Documentation
+  url: docs/
+  internal: true
+- text: Contributing
+  url: contributing/
+  internal: true
 
 # Repo list
 # List repos that you would like to appear on the homepage here
 repos:
-- name: DOCter
-  description: Jekyll template for docs
-  url: https://github.com/cfpb/DOCter
-
+- name: Butternut
+  description: source code
+  url: https://github.com/loranallensmith/butternut
 # Style Variables
-brand_color: "#2cb34a"
+brand_color: "#bc674a"
 
 # Offline caching
 offline_cache: false
