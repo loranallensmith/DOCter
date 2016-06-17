@@ -3,6 +3,15 @@
 Butternut is a plugin for bundling assets.
 It integrates with multiple frameworks for a seamless deployment experience.
 
+#### Features
+
+* Custom commands for bundle compression
+* Compressed bundle caching
+* Bundling and caching of remote assets
+* Dev mode, for easy site development with all assets
+* Dev-only asset inclusion
+* Works with [Octopress](http://octopress.org/)
+
 ## Installation
 
 Copy or link `asset_bundler.rb` into your `_plugins` folder
@@ -29,15 +38,6 @@ To update:
 Currently only supports absolute asset paths in relation to your
 source directory.  For example: `/css/mystyle.css` looks for a file
 in `my_source_dir/css/mystyle.css`.
-
-#### Features
-
-* Works with [Octopress](http://octopress.org/)
-* Custom commands for bundle compression
-* Compressed bundle caching
-* Bundling and caching of remote assets
-* Dev mode, for easy site development with all assets
-* Dev-only asset inclusion
 
 #### TODO
 
