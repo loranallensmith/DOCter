@@ -1,73 +1,234 @@
-# DOCter
+# Getting Started
 
-DOCter is a [Jekyll](http://jekyllrb.com/) template for quickly building out project pages and documentation.
+Butternut is a plugin for bundling assets.
+It integrates with multiple frameworks for a seamless deployment experience.
 
-![DOCter Screenshot](https://github.com/ascott1/DOCter/blob/gh-pages/assets/img/screenshot.png?raw=true)
+#### Features
+* Custom commands for bundle compression
+* Compressed bundle caching
+* Bundling and caching of remote assets
+* Dev mode, for easy site development with all assets
+* Dev-only asset inclusion
+* Works with [Octopress](http://octopress.org/)
 
-[See the demo](http://cfpb.github.io/DOCter/)
+## Installation
 
-## To run DOCter locally
+Copy or link `asset_bundler.rb` into your `_plugins` folder
+for your project.
 
-DOCter needs Jekyll and other dependencies to run locally. These can be installed with Bundler by running the following commands.
+If your project is in a git repository, you can easily
+manage your plugins by utilizing git submodules.
 
-```
-gem install bundler
-bundle install
-```
-
-Fork and clone the repo:
-
-```
-git clone git@github.com:cfpb/DOCter.git
-cd DOCter
-```
-Run Jekyll:
+To install this plugin as a git submodule:
 
 ```
-bundle exec jekyll serve --watch --baseurl ''
+    git submodule add git://github.com/ipsum/butternut.git _plugins/asset_bundler`
 ```
 
-Open it up in your browser: <http://localhost:4000/>
+To update:
 
+```
+    cd _plugins/asset_bundler
+    git pull origin master
+```
 
-## `_config.yml`
+## Status
 
-Options within the `_config.yml` file allow you to control the site's title, subtitle, logo, author information, and the left column navigation.
+Currently only supports absolute asset paths in relation to your
+source directory.  For example: `/css/mystyle.css` looks for a file
+in `my_source_dir/css/mystyle.css`.
 
+#### TODO
 
-### Project Page URL Structure
+* Relative paths support
+* CoffeeScript and LessCSS compilation support
 
-**This is an excerpt from the [Jekyll docs](http://jekyllrb.com/docs/github-pages/) on configuring your URL for Project Pages.**
+#### Notes
 
-Sometimes it's nice to preview your Jekyll site before you push your `gh-pages` branch to GitHub. However, the subdirectory-like URL structure GitHub uses for Project Pages complicates the proper resolution of URLs. Here is an approach to utilizing the GitHub Project Page URL structure (`username.github.io/project-name/`) whilst maintaining the ability to preview your Jekyll site locally.
+**v0.05** - Changed from using Liquid::Tags to Liquid::Blocks.
+This will break on existing bundle markup if you upgrade.
 
-1. In `_config.yml`, set the `baseurl` option to `/project-name` -- note the leading slash and the **absence** of a trailing slash.
-2. When referencing JS or CSS files, do it like this: `{{ site.baseurl }}/path/to/css.css` -- note the slash immediately following the variable (just before "path").
-3. When doing permalinks or internal links, do it like this: `{{ site.baseurl }}{{ post.url }}` -- note that there is **no** slash between the two variables.
-4. Finally, if you'd like to preview your site before committing/deploying using `jekyll serve`, be sure to pass an **empty string** to the `--baseurl` option, so that you can view everything at `localhost:4000` normally (without `/project-name` at the beginning): `jekyll serve --baseurl ''`
+Why change it?  Well, Liquid::Tags have to be on one line,
+whereas Liquid::Blocks do not, also it opens up some more
+flexibility, as additional options could be included in the
+tag text.
 
-This way, you can preview your site locally from the site root on localhost, but when GitHub generates your pages from the gh-pages branch all the URLs will start with `/project-name` and resolve properly.
+**v0.08** - Changed the `cdn` config parameter to `server_url` in order to be
+more generic.  For the time being, `cdn` still works (see below).
 
+Why change it?  There seemed to be a little confusion about the parameter name
+and what the parameter does.
 
-## Offline support
+**v0.11** - `jekyll --watch` now turns on dev mode.  Removed code for
+compatibility with versions of Jekyll pre 1.0.
 
-DOCter provides optional offline support via a [Service Worker](http://www.html5rocks.com/en/tutorials/service-worker/introduction/). This means that, when enabled, after an initial load of your DOCter site, a cached version will be available offline in some modern browsers.
+Why change it?  `jekyll --watch` isn't really supported by the plugin anyway.
+Also, Jekyll is changing and I don't want this to be any more of an
+unmaintainable mess.
 
-**To enable offline caching:**
+#### Is it production ready?
 
-in `_config.yml`: set `offline_cache` to `true` (defaults to `false`)
+Consider this beta software, though for small Jekyll sites you
+should have no problem using it.
 
-**To update the cached version of your site:**
+## Usage
 
-in `_config.yml`: change the value of `cache_name` (this should be done with every significant update to the site)
+Once installed in your `_plugins` folder Jekyll Asset Bundler provides
+Liquid::Blocks to use which will generate the appropriate
+markup for including JavaScript and CSS.
+Each of the following blocks consumes a [YAML](http://yaml.org)
+formatted array.
 
-**To add additional files to the cache:**
+The `dev_assets` tag includes the normal markup for the referenced
+assets only in 'dev mode'.  The array items can either be local files
+or urls for external scripts and are included as-is.
+At any other time, it does nothing.
+In a future version (hopefully soon), this will play a role in
+utilizing things like LessCSS and CoffeeScript.
 
-in `sw.js`: update the `filesToCache` array
+## Configuration
 
+Some behavior can be modified with settings in your `_config.yml`.  The
+following represents the default configuration:
+
+```
+    asset_bundler:
+      compress:
+        js: false
+        css: false
+      base_path: /bundles/
+      server_url:
+      remove_bundled: false
+      dev: false
+      bundle_name: false
+      markup_templates:
+        js: "<script type='text/javascript' src='{{url}}'></script>\n"
+        css: "<link rel='stylesheet' type='text/css' href='{{url}}' />\n"
+```
+
+Here is a breakdown of each configuration option under the top level
+`asset_bundler` key.
+
+### compress:
+
+Compresses nothing by default. Change the `js` and `css` keys to
+modify compression behavior.
+
+#### js:
+
+To compress with the yui-compressor gem, use 'yui' here,
+to compress with the closure compiler gem, use 'closure' here.
+
+    compress:
+      js: yui
+
+To compress with a system command, enter it for the
+appropriate asset type:
+
+    compress:
+      js: uglifyjs :infile -o :outfile -c
+
+This example will run a `uglifyjs` command from your PATH
+while substituting :outfile and :infile for temporary files
+stored in `_asset_bundler_cache`.
+
+If either :outfile or :infile are omitted, stdout and
+stdin will be used.  *WARNING*, stdin and stdout are done
+with IO.popen , which doesn't work on Windows
+
+**Note:** Some have reported other issues when using the yui-compressor or
+closure compiler gems on Windows. If you having trouble on windows, try
+specifying a command as outlined above.
+
+#### css:
+
+Takes the exact same arguments as `js:`, with the exception
+of the Google Closure Compiler ( it's JavaScript only ).
+
+### base_path:
+
+Where the bundles will be copied within your destination
+folder.
+
+Default: `/vendor/bundles/`.
+
+### server_url:
+
+**NOTE:** In v0.07 and earlier this setting was `cdn`.  The `cdn` key still
+works and will act as an alias.  However, if the `server_url` key is set, it
+will override `cdn`.
+
+The root path of your server\_url or CDN (if you use one).
+For example: http://my-cdn.cloudfront.net/
+
+Jekyll Asset Bundler checks to make sure that this setting ends in a slash.
+
+Default: ` ` (blank).
+
+### remove_bundled:
+
+If set to true, will remove the files included in your
+bundles from the destination folder.
+
+Default: `false`.
+
+### dev:
+
+**NOTE:** In v0.10 and earlier, dev mode was not enabled automatically for
+`--auto` or `--watch` mode.
+
+If set to true, enables dev mode.  When dev mode is active,
+no bundles are created and all the referenced files are
+included individually without modification.
+
+Dev mode is also automatically enabled when using
+`jekyll server`, `jekyll --watch` or when a top level configuration key: `dev`
+is set to true.
+
+Default: `false`.
+
+### bundle_name:
+
+Overrides bundle name. When false, MD5 hash of the content is used instead.
+
+Default: `false`.
+
+### markup_templates:
+
+Use the relevant markup\_template options to override the default templates
+for inserting bundles.  Each option is parsed with `Liquid::Template.parse`
+and passed a `url` (String) parameter.
+
+**Note:** if you want newlines to be passed in properly, be sure to quote your
+templates in `_config.yml`.
+
+#### js:
+
+The default JavaScript markup is fairly verbose.  If you would like a modern
+replacement, try `"<script src='{{url}}'></script>\n"`.
+
+Default: `"<script type='text/javascript' src='{{url}}'></script>\n"`
+
+#### css:
+
+The default CSS is also verbose.  If you would like a modern
+replacement, try `"<link rel=stylesheet href='{{url}}'>\n"`.
+
+Default: `"<link rel='stylesheet' type='text/css' href='{{url}}' />\n"`
+
+## Dependencies
+
+Jekyll Asset Bundler uses the
+[yui-compressor](https://github.com/sstephenson/ruby-yui-compressor) or
+[closure-compiler](https://github.com/documentcloud/closure-compiler) gems
+(when configured) and (obviously)
+[Jekyll](http://jekyllrb.com).
+
+## Author
+
+Colin Kennedy, moshen on GitHub
 
 ## License
 
-The project is in the public domain, and all contributions to it will be released as such. By submitting a pull request, you are agreeing to waive all rights to your contribution under the terms of the [CC0 Public Domain Dedication](http://creativecommons.org/publicdomain/zero/1.0/).
-
-If you contribute the open source work of others, please mark it clearly in your pull request.
+[MIT](http://colken.mit-license.org),
+see LICENSE file.
