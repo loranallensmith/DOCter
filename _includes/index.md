@@ -150,7 +150,7 @@ of the Google Closure Compiler ( it's JavaScript only ).
 Where the bundles will be copied within your destination
 folder.
 
-Default: `/bundles/`.
+Default: `/vendor/bundles/`.
 
 ### server_url:
 
